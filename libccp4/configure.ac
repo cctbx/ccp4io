@@ -1,12 +1,12 @@
 
-AC_INIT(libccp4, 6.4.0)
+AC_INIT(libccp4, 7.0.0) # keep version in sync with ccp4/ccp4_program.h
 
 AC_CONFIG_AUX_DIR(build-aux)
 AC_CONFIG_MACRO_DIR(m4)
 AC_CONFIG_SRCDIR(ccp4/cmtzlib.c)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE([1.11 foreign subdir-objects silent-rules -Wall])
-AM_PROG_AR
+m4_ifdef([AM_PROG_AR], [AM_PROG_AR])
 LT_INIT([disable-shared win32-dll])
 
 AC_PROG_CC
@@ -101,8 +101,8 @@ if test "x$enable_fortran" != "xno"; then
 
   AC_SEARCH_LIBS(cos, m, , AC_MSG_ERROR([math library not found.]))
   AC_LANG_PUSH([C++])
-  AC_CHECK_LIB(mmdb, MMDB_CCIF_Init, :,
-               AC_MSG_WARN([mmdb library not found.]))
+  AC_CHECK_LIB(mmdb2, MMDB_CCIF_Init, :,
+               AC_MSG_WARN([mmdb2 library not found.]))
   AC_LANG_POP([C++])
 
 fi #dnl fortran API elements

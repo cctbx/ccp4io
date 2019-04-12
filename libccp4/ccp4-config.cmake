@@ -5,17 +5,22 @@
 #
 # Once done this will define
 #  CCP4_INCLUDE_DIRS - all include directories
-#  <name>_LIBRARY - library, name is one of CCP4C, CCP4F, MMDB, CCIF, SSM,
-#                            CCP4SRS, CCTBX,
+#  <name>_LIBRARY - library, name is one of CCP4C, CCP4F, MMDB, MMDB2, CCIF,
+#                            SSM, CCP4SRS,
 #                            CLIPPER-CORE, CLIPPER-CCP4, CLIPPER-CONTRIB,
 #                            CLIPPER-MINIMOL, CLIPPER-MMDB, CLIPPER-CIF,
-#                            RFFTW2, FFTW2
+#                            RFFTW2, FFTW2,
+#                            HKLFILE, CCTBX
 #  CCIF_LIBRARIES - CCIF_LIBRARY with (if needed) regex library
 #  CCP4SRS_LIBRARIES - CCP4SRS_LIBRARY with (if needed) mmdb and zlib libraries
 #  CLIPPER-CORE_LIBRARIES - CLIPPER-CORE_LIBRARY with (if needed)
 #                           fftw2 and thread library
 #  CCP4_LIBRARIES - all requested libraries with necessary dependencies
 #  <name>_FOUND - TRUE if library and header files are found.
+#
+#  CCP4_PY2_DIR - when building the CCP4 suite, CCP4_PY2_DIR is set to
+#                 preferred installation directory for Python2 modules.
+#                 (defaults to ${LIB_INSTALL_DIR}/py2)
 #
 # You need to name libraries that you will use as components:
 # FIND_PACKAGE(CCP4 COMPONENTS mmdb ccp4c)
@@ -59,6 +64,8 @@ foreach(_component ${CCP4_FIND_COMPONENTS})
 
     if (${_upper} STREQUAL "MMDB")
         set(_header "mmdb/mmdb_defs.h")
+    elseif (${_upper} STREQUAL "MMDB2")
+        set(_header "mmdb2/mmdb_defs.h")
     elseif (${_upper} STREQUAL "CCP4C")
         set(_header "ccp4/ccp4_general.h")
     elseif (${_upper} STREQUAL "CCP4F")
@@ -83,6 +90,8 @@ foreach(_component ${CCP4_FIND_COMPONENTS})
         set(_header "clipper/clipper-mmdb.h")
     elseif (${_upper} STREQUAL "CLIPPER-CIF")
         set(_header "clipper/clipper-cif.h")
+    elseif (${_upper} STREQUAL "HKLFILE")
+        set(_header "hklfile/columngroups.hh")
     elseif (${_upper} STREQUAL "CCTBX")
         set(_header "cctbx/crystal/symmetry.h")
     else()
@@ -127,7 +136,7 @@ foreach(_component ${CCP4_FIND_COMPONENTS})
         set(_SAVE ${CMAKE_REQUIRED_INCLUDES})
         set(CMAKE_REQUIRED_INCLUDES "${_SAVE};${CCP4SRS_INCLUDE_DIR}")
         set(_SRS_SRC "#include <ccp4srs/memio_.h>\n"
-                      "int main() { CMemIO m; m.read(\"f\", 1);}")
+                      "int main() { ccp4srs::MemIO m; m.read(\"f\");}")
         set(CMAKE_REQUIRED_LIBRARIES ${CCP4SRS_LIBRARY})
         set(_VAR _LINKING_WITH_CCP4SRS)
         check_cxx_source_compiles("${_SRS_SRC}" ${_VAR})
@@ -140,12 +149,12 @@ foreach(_component ${CCP4_FIND_COMPONENTS})
             if (NOT ZLIB_LIBRARY)
              message(FATAL_ERROR "Linking with ccp4srs fails. zlib not found.")
             endif()
-            if (NOT MMDB_LIBRARY)
-                find_library(MMDB_LIBRARY NAMES mmdb
+            if (NOT MMDB2_LIBRARY)
+                find_library(MMDB2_LIBRARY NAMES mmdb2
                          HINTS ${LIB_INSTALL_DIR} ${CMAKE_INSTALL_PREFIX}/lib
                          PATHS ${_clib})
             endif()
-            set(_ADD_LIBS ${MMDB_LIBRARY} ${ZLIB_LIBRARY})
+            set(_ADD_LIBS ${MMDB2_LIBRARY} ${ZLIB_LIBRARY})
             set(CMAKE_REQUIRED_LIBRARIES ${CCP4SRS_LIBRARY} ${_ADD_LIBS})
             set(_VAR _LINKING_WITH_CCP4SRS_MMDB_AND_ZLIB)
             check_cxx_source_compiles("${_SRS_SRC}" ${_VAR})
@@ -219,7 +228,9 @@ endforeach()
 
 
 set(CCP4_LIBRARIES ${CCTBX_LIBRARY}
+                   ${HKLFILE_LIBRARY}
                    ${CLIPPER-CCP4_LIBRARY}
+                   ${CLIPPER-CIF_LIBRARY}
                    ${CLIPPER-CONTRIB_LIBRARY}
                    ${CLIPPER-MINIMOL_LIBRARY}
                    ${CLIPPER-MMDB_LIBRARY}
@@ -229,6 +240,7 @@ set(CCP4_LIBRARIES ${CCTBX_LIBRARY}
                    ${CCIF_LIBRARIES}
                    ${CCP4F_LIBRARY}
                    ${CCP4C_LIBRARY}
+                   ${MMDB2_LIBRARY}
                    ${MMDB_LIBRARY})
 
 if(CCP4_INCLUDE_DIRS)
@@ -243,10 +255,18 @@ if(CCP4_LIBRARIES)
     list(REVERSE CCP4_LIBRARIES)
 endif()
 
-mark_as_advanced(CCP4C_INCLUDE_DIR MMDB_INCLUDE_DIR CCIF_INCLUDE_DIR
-                 SSM_INCLUDE_DIR CCP4SRS_INCLUDE_DIR
+if(DEFINED LIB_INSTALL_DIR)
+    set(CCP4_PY2_DIR ${LIB_INSTALL_DIR}/py2)
+elseif(DEFINED CMAKE_INSTALL_PREFIX)
+    set(CCP4_PY2_DIR ${CMAKE_INSTALL_PREFIX}/lib/py2)
+endif()
+
+mark_as_advanced(CCP4C_INCLUDE_DIR MMDB_INCLUDE_DIR MMDB2_INCLUDE_DIR
+                 CCIF_INCLUDE_DIR SSM_INCLUDE_DIR
+                 CCP4SRS_INCLUDE_DIR
                  CLIPPER-CORE_INCLUDE_DIR CLIPPER-CCP4_INCLUDE_DIR
+                 CLIPPER-CIF_INCLUDE_DIR
                  CLIPPER-CONTRIB_INCLUDE_DIR CLIPPER-MINIMOL_INCLUDE_DIR
                  CLIPPER-MMDB_INCLUDE_DIR FFTW2_INCLUDE_DIRS
-                 CCTBX_INCLUDE_DIR)
+                 CCTBX_INCLUDE_DIR HKLFILE_INCLUDE_DIR CCP4_PY2_DIR)
 

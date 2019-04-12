@@ -51,7 +51,7 @@ fortran/dna_header.fh
 nodist_fortran_libccp4f_la_SOURCES = fortran/unix.f
 
 fortran_libccp4f_la_CPPFLAGS = -I$(srcdir)/ccp4
-fortran_libccp4f_la_LIBADD = ccp4/libccp4c.la -lmmdb
+fortran_libccp4f_la_LIBADD = ccp4/libccp4c.la -lmmdb2
 
 BUILT_SOURCES = fortran/unix.f
 CLEANFILES = fortran/unix.f
@@ -66,7 +66,7 @@ fortran_libccp4f_la_LDFLAGS = -no-undefined
 # compiled with libccp4 (see http://www.ccp4.ac.uk/dist/html/ccp4.html)
 
 dist_ccp4data_DATA = ccp4-config.cmake
-dist_data_DATA = data/atomsf_neutron.lib \
+dist_data_DATA = data/atomsf_neutron.lib data/atomsf_electron.lib \
 		     data/atomsf.lib data/syminfo.lib data/symop.lib
 pkgconfig_DATA = libccp4c.pc
 if FORTRAN_LIB
