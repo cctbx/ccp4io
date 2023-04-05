@@ -4,13 +4,13 @@
 
      This library is free software: you can redistribute it and/or
      modify it under the terms of the GNU Lesser General Public License
-     version 3, modified in accordance with the provisions of the 
+     version 3, modified in accordance with the provisions of the
      license to address the requirements of UK law.
- 
-     You should have received a copy of the modified GNU Lesser General 
-     Public License along with this library.  If not, copies may be 
+
+     You should have received a copy of the modified GNU Lesser General
+     Public License along with this library.  If not, copies may be
      downloaded from http://www.ccp4.ac.uk/ccp4license.php
- 
+
      This program is distributed in the hope that it will be useful,
      but WITHOUT ANY WARRANTY; without even the implied warranty of
      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -86,7 +86,7 @@
 #ifndef NOUNISTD
 #  include <unistd.h>
 #else
-#  ifndef VMS 
+#  ifndef VMS
 #    ifndef _MSC_VER
 #      include <sys/file.h>     /* ESV, old Concentrix */ /* non-POSIX */
 #    endif
@@ -119,7 +119,7 @@
 #endif
 
 /* defined in library_utils.c */
-#if defined(_MSC_VER) &&  _MSC_VER < 1800 
+#if defined(_MSC_VER) &&  _MSC_VER < 1800
   double rint(double x);
 #endif
 
@@ -224,7 +224,7 @@
 #endif
 
 /* From time to time new architectures are added here, often because Linux
- * packagers want to build it on all platforms supported by their distro. 
+ * packagers want to build it on all platforms supported by their distro.
  * Here we try to catch machines not listed explicitely above, under
  * assumption that endianness is the same for floating point numbers
  * as for integers. Which is safe assumption on modern standard computers
@@ -241,7 +241,7 @@
 # endif
 #endif
 
-// Check for Apple Silicon
+/* Check for Apple Silicon */
 #if defined(__APPLE__) && defined(__arm64__)
 #  define NATIVEIT DFNTI_IBO
 #  define NATIVEFT DFNTF_LEIEEE
